@@ -1,4 +1,4 @@
-package main
+package 螺旋矩阵
 
 import (
 	"bufio"
@@ -7,6 +7,13 @@ import (
 	"strconv"
 )
 
+/**
+ * @Description
+给你一个正整数 n ，生成一个包含 1 到 n2 所有元素，
+且元素按顺时针顺序螺旋排列的 n x n 正方形矩阵 matrix 。
+ * @Author 赵稳
+ * @Date 2022-05-27 14:22
+ **/
 func generateMatrix(n int) [][]int{
 	//构造n x n的矩阵
 	res:=make([][]int,n)
@@ -49,7 +56,4 @@ func generateMatrixTest(){
 	n,_:=strconv.Atoi(input.Text())
 	res:=generateMatrix(n)
 	fmt.Println(res)
-}
-func main(){
-	generateMatrixTest()
 }
