@@ -4,7 +4,7 @@ package 移除元素相关
  * @Description
 网易互娱一面变形题： 将指定的元素1、6、3移动到末尾，
 并且需要保持所有元素的相对顺序。
- * @Author 赵稳
+ * @Author ZzzWw
  * @Date 2022-05-31 15:15
  **/
 func moveZ(nums []int, k int) {

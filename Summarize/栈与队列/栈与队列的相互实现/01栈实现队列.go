@@ -2,7 +2,7 @@ package 栈与队列的相互实现
 
 /**
  * @Description
- * @Author 赵稳
+ * @Author ZzzWw
  * @Date 2022-05-24 13:48
  **/
 

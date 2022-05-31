@@ -30,7 +30,7 @@ LL binPow(LL x,LL k)
 return ans;
 }
 
- * @Author 赵稳
+ * @Author ZzzWw
  * @Date 2022-05-25 14:04
  **/
 

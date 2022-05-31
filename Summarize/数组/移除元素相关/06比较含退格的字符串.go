@@ -11,7 +11,7 @@ package 移除元素相关
 输出：true
 解释：s 和 t 都会变成 "ac"。
 
- * @Author 赵稳
+ * @Author ZzzWw
  * @Date 2022-05-31 15:16
  **/
 func getStr(s string) string {

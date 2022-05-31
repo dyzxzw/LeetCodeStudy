@@ -8,7 +8,7 @@ package 二分查找
 
 注意：不允许使用任何内置指数函数和算符，
 例如 pow(x, 0.5) 或者 x ** 0.5 。
- * @Author 赵稳
+ * @Author ZzzWw
  * @Date 2022-05-25 14:00
  **/
 func mySqrt(x int) int {

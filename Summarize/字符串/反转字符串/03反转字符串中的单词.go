@@ -8,7 +8,7 @@ package 反转字符串
 输入：s = "Let's take LeetCode contest"
 输出："s'teL ekat edoCteeL tsetnoc"
 
- * @Author 赵稳
+ * @Author ZzzWw
  * @Date 2022-05-23 17:09
  **/
 

@@ -20,7 +20,7 @@ import (
 解释：如果两个单词间有多余的空格，颠倒后的字符串需要将单词间的空格减少到仅有一个。
 
 
- * @Author 赵稳
+ * @Author ZzzWw
  * @Date 2022-05-23 17:26
  **/
 func reverseWords2(s string) string {

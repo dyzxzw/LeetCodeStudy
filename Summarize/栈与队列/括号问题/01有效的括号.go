@@ -15,7 +15,7 @@ package 括号问题
 
 输入：s = "(]"
 输出：false
- * @Author 赵稳
+ * @Author ZzzWw
  * @Date 2022-05-25 15:43
  **/
 func isValid(s string) bool {
