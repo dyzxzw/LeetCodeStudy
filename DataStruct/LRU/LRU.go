@@ -30,15 +30,15 @@ func initDLinkedNode(key,value int)*DLinkedNode{
 	}
 }
 
-type LRUCache struct {
+type LruCache struct {
 	size int
 	capacity int
 	cache map[int]*DLinkedNode
 	head,tail *DLinkedNode
 }
 
-func Constructor(cap int) LRUCache{
-	l:=LRUCache{
+func Constructor(cap int) LruCache {
+	l:= LruCache{
 		size: 0,
 		capacity: cap,
 		cache: map[int]*DLinkedNode{},
@@ -52,7 +52,7 @@ func Constructor(cap int) LRUCache{
 
 //查找
 
-func(this *LRUCache)Get(key int)int{
+func(this *LruCache)Get(key int)int{
 	if node,ok:=this.cache[key];!ok{
 		return -1
 	}else{
@@ -63,7 +63,7 @@ func(this *LRUCache)Get(key int)int{
 
 //修改
 
-func(this*LRUCache)Put(key,val int){
+func(this*LruCache)Put(key,val int){
 	if node,ok:=this.cache[key];ok{
 		node.value=val
 		this.moveToHead(node)
@@ -83,25 +83,25 @@ func(this*LRUCache)Put(key,val int){
 	}
 }
 
-func(this*LRUCache)moveToHead(node*DLinkedNode){
+func(this*LruCache)moveToHead(node*DLinkedNode){
 	this.removeNode(node)
 	this.addToHead(node)
 }
 
-func(this*LRUCache)removeNode(node *DLinkedNode){
+func(this*LruCache)removeNode(node *DLinkedNode){
 	node.next.prev=node.prev
 	node.prev.next=node.next
 	node.next=nil
 	node.prev=nil
 }
-func(this*LRUCache)addToHead(node*DLinkedNode){
+func(this*LruCache)addToHead(node*DLinkedNode){
 	node.next=this.head.next
 	this.head.next.prev=node
 	node.prev=this.head
 	this.head.next=node
 }
 
-func(this*LRUCache)removeTail()*DLinkedNode{
+func(this*LruCache)removeTail()*DLinkedNode{
 	rm:=this.tail.prev
 	this.removeNode(rm)
 	return rm
