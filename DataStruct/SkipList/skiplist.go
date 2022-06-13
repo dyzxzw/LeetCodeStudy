@@ -1,5 +1,11 @@
 package SkipList
 
+import (
+	"math/rand"
+	"strings"
+	"time"
+)
+
 /**
  * @Description
 
@@ -37,54 +43,47 @@ n/2+n/4+.....+2=n-2
  * @Author ZzzWw
  * @Date 2022-06-10 14:38
  **/
-/*
-const(
-	P = 0.25
-	MaxLevel =16 //最大层数，视情况而定
-)
-func randomLevel()int{
-	i:=1
+
+func init(){
 	rand.Seed(time.Now().UnixNano())
-    for i<MaxLevel{
-		if rand.Float64()<P{
-			i++
-		}else{
-			break
-		}
-	}
-	return i
-}
-type Node struct {
-	level int
-	next []*Node
-	v int
-}
-type skipList struct {
-	head *Node
-}
-func NewSkipList()*skipList{
-	s:=new(skipList)
-	s.head=new(Node)
-    s.head.level=MaxLevel
-	s.head.next=make([]*Node,MaxLevel)
-	return s
 }
 
-func(s*skipList)insert(v int){
-	l:=randomLevel()
-	add:=new(Node)
-	add.level=l
-	add.next=make([]*Node,l)
-	add.v=v
-	i:=l
+type skipListNode struct {
+	key string
+	value interface{}
+	next []*skipListNode
+}
 
-	p:=s.head
-	for i>0{
-		n:=p.next[i-1]
-		for n!=nil && n.v<v{
-			p=n
-			n=n.next[i-1]
-		}
+type SkipList struct {
+	head *skipListNode //头结点
+	maxLevel int //最大层数
+	length int //长度
+}
+
+func NewSkipList()*SkipList{
+	return &SkipList{
+		head:&skipListNode{
+			next: make([]*skipListNode,1),
+		},
+		maxLevel: 1,
+		length: 0,
 	}
 }
-*/
+
+//Search is
+func (s *SkipList)Search(key string)interface{}{
+	current := s.head // 从头节点开始
+	for i := s.maxLevel - 1; i >= 0; i-- {
+		// 找到当前level最后一个小于key的节点
+		for current.next[i] != nil && strings.Compare(current.next[i].key ,key)>0{
+			current = current.next[i]
+		}
+		// 进入下一个level寻找
+	}
+	// 如果找到了就返回value
+	current = current.next[0] // 大于等于key的第一个节点，只会在level为0的时候找到
+	if current != nil && strings.Compare(current.key , key)==0 {
+		return current.value
+	}
+	return -1
+}

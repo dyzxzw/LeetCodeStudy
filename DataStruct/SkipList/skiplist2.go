@@ -1,8 +1,7 @@
 package SkipList
 
 import (
-	"bytes"
-	"math"
+	"fmt"
 	"math/rand"
 	"time"
 )
@@ -13,90 +12,150 @@ import (
  * @Date 2022-06-10 21:08
  **/
 
-const(
-	MaxLevel int = 16 //设置最大为18层，可以视情况调节
-	probability float64 =1/math.E //0.36787944117144233
-)
 
-type Element struct {
-	Node
-	key []byte
-	value interface{}
-}
-type Node struct {
-	next []*Element
+// 跳表
+func init() {
+	rand.Seed(time.Now().UnixNano())
 }
 
-type SkipList struct {
-	Node
-	maxLevel int
-	Len int
-	randSource rand.Source
-	probability    float64
-	probTable      []float64
-	prevNodesCache []*Node
+type SkipList2 struct {
+	head     *SkipListNode // 头节点
+	maxLevel int           // 最大层数
+	length   int           // 长度
 }
 
-// NewSkipList create a new skip list.
-func NewSkipList()*SkipList{
+type SkipListNode struct {
+	key   int
+	value int
+	next  []*SkipListNode // 每个level的下一个节点
+}
+
+func NewSkipList2() *SkipList {
 	return &SkipList{
-		Node:  Node{next: make([]*Element, MaxLevel)},
-		prevNodesCache: make([]*Node,MaxLevel),
-		maxLevel:       MaxLevel,
-		randSource:     rand.New(rand.NewSource(time.Now().UnixNano())),
-		probability:    probability,
-		probTable:      probabilityTable(probability,  MaxLevel),
-
+		head: &SkipListNode{
+			next: make([]*SkipListNode, 1),
+		},
+		maxLevel: 1,
+		length:   0,
 	}
 }
 
-// Key 获得element的key
-func(e *Element)Key()[]byte{
-	return e.key
-}
-
-// Value 获得element的value
-func(e *Element)Value()interface{}{
-	return e.value
-}
-
-// SetValue 设置element的value
-func(e*Element)SetValue(val interface{}){
-	e.value=val
-}
-
-//Next
-func(e*Element)Next()*Element{
-	return e.next[0]
-}
-//Front
-func(t *SkipList)Front()*Element{
-	return t.next[0]
-}
-
-func (t *SkipList) Get(key []byte) *Element{
-	var prev=&t.Node
-	var next *Element
-
-	for i:=t.maxLevel-1;i>=0;i--{
-		next=prev.next[i]
-
-		for next!=nil &&bytes.Compare(key,next.key)>0{
-			prev=&next.Node
-			next=next.next[i]
+func (s *SkipList) Insert(key int, value int) {
+	update := make([]*SkipListNode, s.maxLevel)
+	current := s.head
+	for i := s.maxLevel - 1; i >= 0; i-- {
+		// 找到当前level最后一个小于key的节点
+		for current.next[i] != nil && current.next[i].key < key {
+			current = current.next[i]
+		}
+		update[i] = current
+	}
+	// 如果插入的key已经存在，则更新value，并返回
+	current = current.next[0]
+	if current != nil && current.key == key {
+		current.value = value
+		return
+	}
+	// 随机插入节点的level
+	level := randomLevel(s.maxLevel)
+	// 如果level大于当前跳表的最大level，则更新最大level
+	if level > s.maxLevel {
+		for i := s.maxLevel; i < level; i++ {
+			update = append(update, s.head)
+		}
+		s.maxLevel++
+		s.head.next = append(s.head.next, nil)
+	}
+	// 新建节点
+	node := &SkipListNode{
+		key:   key,
+		value: value,
+		next:  make([]*SkipListNode, level),
+	}
+	// 插入节点
+	for i := 0; i < level; i++ {
+		if i < len(update[i].next) {
+			node.next[i] = update[i].next[i]
+			update[i].next[i] = node
 		}
 	}
-
-	if next!=nil && bytes.Compare(next.key,key)<=0{
-		return next
-	}
-	return nil
+	s.length++
 }
 
-//所以调用get函数，只要返回不为nil即表明目标存在跳表中
-// Exist check if exists the key in skl.
+func randomLevel(l int) int {
+	level := 1
+	for rand.Intn(2) == 0 {
+		level++
+		if level >= l+1 {
+			break
+		}
+	}
+	return level
+}
 
-func (t *SkipList) Exist(key []byte) bool {
-	return t.Get(key) != nil
+func (s *SkipList) Delete(key int) {
+	update := make([]*SkipListNode, s.maxLevel)
+	current := s.head
+	// 找到要删除节点每个level下的前一个节点，
+	for i := s.maxLevel - 1; i >= 0; i-- {
+		for current.next[i] != nil && current.next[i].key < key {
+			current = current.next[i]
+		}
+		update[i] = current
+	}
+	current = current.next[0]
+	// 如果找到了就删除
+	if current != nil && current.key == key {
+		for i := 0; i < s.maxLevel; i++ {
+			if update[i].next[i] != current {
+				break
+			}
+			// 直接将当前level的前一个节点指向下一个节点
+			update[i].next[i] = current.next[i]
+		}
+		// 更新最大level
+		for s.maxLevel > 1 && s.head.next[s.maxLevel-1] == nil {
+			s.maxLevel--
+		}
+		s.length--
+	}
+}
+
+func (s *SkipList) Search(key int) int {
+	current := s.head // 从头节点开始
+	for i := s.maxLevel - 1; i >= 0; i-- {
+		// 找到当前level最后一个小于key的节点
+		for current.next[i] != nil && current.next[i].key < key {
+			current = current.next[i]
+		}
+		// 进入下一个level寻找
+	}
+	// 如果找到了就返回value
+	current = current.next[0] // 大于等于key的第一个节点，只会在level为0的时候找到
+	if current != nil && current.key == key {
+		return current.value
+	}
+	return -1
+}
+
+func (s *SkipList) Print() {
+	for i := s.maxLevel - 1; i >= 0; i-- {
+		current := s.head
+		fmt.Printf("level %d: ", i)
+		for current.next[i] != nil {
+			current = current.next[i]
+			fmt.Printf("%d ", current.key)
+		}
+		fmt.Println()
+	}
+}
+
+func main() {
+	sl := NewSkipList()
+	for i := 0; i < 20; i++ {
+		sl.Insert(i, i+100)
+	}
+	sl.Print()
+	fmt.Printf("search: %d\n", sl.Search(5))
 }
 
